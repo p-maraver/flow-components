@@ -833,14 +833,11 @@ import { isFocusable } from '@vaadin/grid/src/vaadin-grid-active-item-mixin.js';
       })
 
       grid.$connector.confirmParent = tryCatchWrapper(function(id, parentKey, levelSize) {
-        if(!treePageCallbacks[parentKey]) {
-          if(cache[parentKey]) {
-            cache[parentKey].size = levelSize;
-          }
-          return;
-        }
         if(cache[parentKey]) {
           cache[parentKey].size = levelSize;
+        }
+        if(!treePageCallbacks[parentKey]) {
+          return;
         }
         let outstandingRequests = Object.getOwnPropertyNames(treePageCallbacks[parentKey]);
         for(let i = 0; i < outstandingRequests.length; i++) {

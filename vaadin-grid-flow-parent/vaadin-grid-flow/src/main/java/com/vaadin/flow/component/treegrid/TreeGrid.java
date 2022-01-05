@@ -677,31 +677,35 @@ public class TreeGrid<T> extends Grid<T>
         }
     }
 
-    // TODO: Temporary safety mechanism to avoid possible infinite loops, remove.
-    private int foo = 0;
+    private int viewportRemaining;
 
     @ClientCallable(DisabledUpdateMode.ALWAYS)
     private void setParentRequestedRange(int start, int length,
             String parentKey) {
+        // Approximated viewport capacity
+        // TODO: Reset on beforeClientResponse to cover multiple setParentRequestedRanges on the same pass?
+        viewportRemaining = 50;
+        recursiveSetParentRequestedRange(start, length, parentKey);
+    }
+
+
+    private void recursiveSetParentRequestedRange(int start, int length, String parentKey) {
         T item = getDataCommunicator().getKeyMapper().get(parentKey);
         if (item != null) {
             getDataCommunicator().setParentRequestedRange(start, length, item);
 
-            foo++;
             // If the item has has expanded children, setParentRequestedRange for them as well
-            // TODO: This PoC will not yet take the viewport size into account, but requests all
-            // the available children.
-            if (getDataCommunicator().hasChildren(item) && foo < 1000) {
-                List<T> children = getDataProvider()
+            // until the viewport is covered
+            if (getDataCommunicator().hasChildren(item)) {
+                getDataProvider()
                     .fetchChildren(new HierarchicalQuery<>(null, item))
-                    .collect(Collectors.toList());
-
-                children.forEach(child -> {
-                    if (isExpanded(child)) {
-                        System.out.println("setting parent range for expanded child: " + child);
-                        setParentRequestedRange(0, 50, getDataCommunicator().getKeyMapper().key(child));
-                    }
-                });
+                    .forEach(child -> {
+                        viewportRemaining--;
+                        if (viewportRemaining > 0 && isExpanded(child)) {
+                            System.out.println("setting parent range for expanded child: " + child);
+                            recursiveSetParentRequestedRange(0, 50, getDataCommunicator().getKeyMapper().key(child));
+                        }
+                    });
             }
         }
     }
