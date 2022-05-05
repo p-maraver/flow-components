@@ -135,6 +135,7 @@ public class GridPro<E> extends Grid<E> {
             if (column.getEditorType().equals("custom")) {
                 column.getEditorField()
                         .setValue(column.getValueProvider().apply(e.getItem()));
+                column.getEditorField().getElement().executeJs("this.style.removeProperty('opacity')");
             }
         });
     }

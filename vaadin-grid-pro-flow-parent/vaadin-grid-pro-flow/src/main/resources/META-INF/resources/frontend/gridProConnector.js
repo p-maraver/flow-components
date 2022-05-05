@@ -16,6 +16,7 @@
             return;
           }
 
+          component.style.opacity = 0;
           if (component.parentNode === root) {
             return;
           }
