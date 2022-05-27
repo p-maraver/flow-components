@@ -186,24 +186,22 @@ export class VaadinSpreadsheet extends LitElement {
   };
 
   render() {
-    return html`
-      <slot></slot>
-    `;
+    return html``;
   }
 
   connectedCallback() {
     super.connectedCallback()
     this.observer && this.observer.observe(this);
     // Restore styles in the case widget is reattached, it happens e.g in client router
-    this.styles && this.styles.forEach(e => document.head.appendChild(e));
+    this.styles && this.styles.forEach(e => this.renderRoot.appendChild(e));
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
     this.observer && this.observer.unobserve(this);
     // Remove styles added to the head by the Widget
-    this.styles = document.head.querySelectorAll(`style[id^="spreadsheet-${this.id}"]`);
-    this.styles.forEach(e => document.head.removeChild(e));
+    this.styles = this.renderRoot.querySelectorAll(`style[id^="spreadsheet-${this.id}"]`);
+    this.styles.forEach(e => this.renderRoot.removeChild(e));
   }
 
   updated(_changedProperties) {
@@ -219,7 +217,7 @@ export class VaadinSpreadsheet extends LitElement {
         document.body.appendChild(overlays);        
       }
 
-      this.api = new Spreadsheet(this);
+      this.api = new Spreadsheet(this.renderRoot);
       this.createCallbacks();
 
       this.observer = new ResizeObserver(e => this.api.resize());
@@ -576,7 +574,7 @@ export class VaadinSpreadsheet extends LitElement {
     if (!elm) {
       elm = document.createElement('style');
       elm.id = id;
-      document.head.append(elm);
+      this.renderRoot.append(elm);
     }
     elm.textContent = style;
   }
