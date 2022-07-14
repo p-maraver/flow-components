@@ -1,3 +1,4 @@
+import Translate from 'ol/interaction/Translate';
 import { synchronize } from './synchronization';
 import { createLookup, getLayerForFeature } from './util';
 
@@ -96,6 +97,31 @@ import { createLookup, getLayerForFeature } from './util';
         mapElement.dispatchEvent(featureClickEvent);
       }
     });
+
+    // Feature drag&drop
+    const translate = new Translate({
+      filter(feature) {
+        return !!feature.draggable;
+      }
+    });
+    translate.on('translateend', (event) => {
+      const feature = event.features.item(0);
+      if (!feature) return;
+      const layer = getLayerForFeature(mapElement.configuration.getLayers().getArray(), feature);
+
+      const featureDragDropEvent = new CustomEvent('map-feature-drag-drop', {
+        detail: {
+          feature,
+          layer,
+          coordinate: event.coordinate,
+          startCoordinate: event.startCoordinate
+        }
+      });
+
+      mapElement.dispatchEvent(featureDragDropEvent);
+    });
+
+    mapElement.configuration.addInteraction(translate);
   }
 
   window.Vaadin.Flow.mapConnector = {

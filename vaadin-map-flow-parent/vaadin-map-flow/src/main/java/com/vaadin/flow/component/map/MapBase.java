@@ -32,6 +32,7 @@ import com.vaadin.flow.component.map.configuration.View;
 import com.vaadin.flow.component.map.configuration.layer.VectorLayer;
 import com.vaadin.flow.component.map.events.MapFeatureClickEvent;
 import com.vaadin.flow.component.map.events.MapClickEvent;
+import com.vaadin.flow.component.map.events.MapFeatureDragDropEvent;
 import com.vaadin.flow.component.map.events.MapViewMoveEndEvent;
 import com.vaadin.flow.component.map.serialization.MapSerializer;
 import com.vaadin.flow.internal.StateTree;
@@ -149,6 +150,16 @@ public abstract class MapBase extends Component implements HasSize, HasTheme {
             Extent extent = event.getExtent();
             getView().updateInternalViewState(center, rotation, zoom, extent);
         });
+        // Register an event listener before all the other listeners of the
+        // feature drag drop event to update the feature's position
+        addFeatureDragDropListener(event -> {
+            double deltaX = event.getCoordinate().getX()
+                    - event.getStartCoordinate().getX();
+            double deltaY = event.getCoordinate().getY()
+                    - event.getStartCoordinate().getY();
+
+            event.getFeature().getGeometry().translate(deltaX, deltaY);
+        });
     }
 
     /**
@@ -217,6 +228,21 @@ public abstract class MapBase extends Component implements HasSize, HasTheme {
     public Registration addFeatureClickListener(
             ComponentEventListener<MapFeatureClickEvent> listener) {
         return addListener(MapFeatureClickEvent.class, listener);
+    }
+
+    /**
+     * Adds an event listener for when a feature is dropped after a drag
+     * operation. Features can be made draggable by setting
+     * {@link Feature#setDraggable(boolean)}.
+     *
+     * @param listener
+     *            the listener to trigger
+     * @return registration for the listener
+     * @see Feature
+     */
+    public Registration addFeatureDragDropListener(
+            ComponentEventListener<MapFeatureDragDropEvent> listener) {
+        return addListener(MapFeatureDragDropEvent.class, listener);
     }
 
     /**
