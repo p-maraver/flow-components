@@ -74,6 +74,7 @@
         <module>vaadin-select-flow-parent</module>
         <module>vaadin-split-layout-flow-parent</module>
         <module>vaadin-tabs-flow-parent</module>
+        <module>vaadin-tabsheet-flow-parent</module>
         <module>vaadin-text-field-flow-parent</module>
         <module>vaadin-time-picker-flow-parent</module>
         <module>vaadin-upload-flow-parent</module>
