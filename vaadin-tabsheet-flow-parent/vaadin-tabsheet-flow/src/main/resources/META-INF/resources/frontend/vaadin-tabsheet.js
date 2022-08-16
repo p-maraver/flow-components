@@ -20,29 +20,43 @@ class TabSheet extends ControllerMixin(ElementMixin(ThemableMixin(PolymerElement
       <style>
         :host {
           display: flex;
+          height: 400px;
         }
+
         :host([orientation='horizontal']) {
           flex-direction: column;
         }
+
         ::slotted([slot='panel']) {
           flex-basis: 100%;
         }
+
         :host([hidden]) {
           display: none !important;
         }
+
         [part='tabs-container'] {
           display: flex;
           flex-direction: column;
           align-items: baseline;
         }
+
         :host([orientation='horizontal']) [part='tabs-container'] {
           flex-direction: row;
         }
+
         [part='tabs'] {
           overflow: hidden;
         }
+
         [part='panel-container'] {
           overflow: auto;
+          flex: 1;
+        }
+
+        :host ::slotted([loading])::before {
+          content: 'Loading...';
+          display: block;
         }
       </style>
       <div part="tabs-container">
@@ -78,7 +92,7 @@ class TabSheet extends ControllerMixin(ElementMixin(ThemableMixin(PolymerElement
       selected: {
         value: 0,
         type: Number,
-        notify: true,
+        notify: true
       },
 
       __tabs: {

@@ -80,6 +80,7 @@ public class TabSheet extends Component implements HasSize, HasStyle, HasTheme {
         var panel = new Div();
         panel.getElement().setAttribute("tab", tab.getId().get());
         panel.getElement().setAttribute("slot", "panel");
+        panel.setSizeFull();
         panel.add(panelContent);
         panelList.add(panel);
         
