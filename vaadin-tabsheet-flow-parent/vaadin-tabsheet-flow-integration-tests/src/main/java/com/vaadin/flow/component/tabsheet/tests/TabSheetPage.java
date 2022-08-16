@@ -29,9 +29,11 @@ public class TabSheetPage extends Div {
         // Add prefix component
         tabsheet.setPrefixComponent(new Paragraph("Prefix"));
 
-        tabsheet.addTab("Tab 1", new Paragraph("Tab 1"));
-        tabsheet.addTab("Tab 2", new Paragraph("Tab 2"));
-        tabsheet.addTab("Tab 3", new Paragraph("Tab 3"));
+        Div div = new Div(new Paragraph("Tab 3"));
+
+        tabsheet.add("Tab 1", new Paragraph("Tab 1"));
+        tabsheet.add("Tab 2", new Paragraph("Tab 2"));
+        tabsheet.add("Tab 3", div);
 
         // Add suffix component
         tabsheet.setSuffixComponent(new Paragraph("Suffix"));

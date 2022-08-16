@@ -77,7 +77,8 @@ class TabSheet extends ControllerMixin(ElementMixin(ThemableMixin(PolymerElement
        */
       selected: {
         value: 0,
-        type: Number
+        type: Number,
+        notify: true,
       },
 
       __tabs: {

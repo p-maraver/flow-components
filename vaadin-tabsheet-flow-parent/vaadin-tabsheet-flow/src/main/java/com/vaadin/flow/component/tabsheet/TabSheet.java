@@ -16,6 +16,9 @@
 
 package com.vaadin.flow.component.tabsheet;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.HasStyle;
@@ -23,6 +26,7 @@ import com.vaadin.flow.component.HasTheme;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
@@ -45,25 +49,47 @@ public class TabSheet extends Component implements HasSize, HasStyle, HasTheme {
 
     private Tabs tabs = new Tabs();
 
+    private List<Div> panelList = new ArrayList<>();
+
     public TabSheet() {
         super();
 
         tabs.getElement().setAttribute("slot", "tabs");
         getElement().appendChild(tabs.getElement());
+
+        getElement().addPropertyChangeListener("selected", "selected-changed", (e) -> {
+            updatePanelsVisibility();
+        });
+        getElement().setProperty("selected", 0);
     }
 
-    public void addTab(Component tabContent, Component panelContent) {
+    private void updatePanelsVisibility() {
+        for (int i = 0; i < panelList.size(); i++) {
+            var panel = panelList.get(i);
+            var isVisiblePanel = i == getElement().getProperty("selected", 0);
+            panel.getElement().getChild(0).setVisible(isVisiblePanel);
+            panel.getElement().setAttribute("loading", !isVisiblePanel);
+        }
+    }
+
+    public void add(Component tabContent, Component panelContent) {
         var tab = new Tab(tabContent);
         tab.setId("tab-" + tabs.getElement().getChildCount());
         tabs.getElement().appendChild(tab.getElement());
 
-        panelContent.getElement().setAttribute("tab", tab.getId().get());
-        panelContent.getElement().setAttribute("slot", "panel");
-        getElement().appendChild(panelContent.getElement());
+        var panel = new Div();
+        panel.getElement().setAttribute("tab", tab.getId().get());
+        panel.getElement().setAttribute("slot", "panel");
+        panel.add(panelContent);
+        panelList.add(panel);
+        
+        getElement().appendChild(panel.getElement());
+
+        updatePanelsVisibility();
     }
 
-    public void addTab(String tabCaption, Component panelContent) {
-        addTab(new Span(tabCaption), panelContent);
+    public void add(String tabCaption, Component panelContent) {
+        add(new Span(tabCaption), panelContent);
     }
 
 
