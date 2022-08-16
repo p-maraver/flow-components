@@ -58,17 +58,24 @@ public class TabSheet extends Component implements HasSize, HasStyle, HasTheme {
         getElement().appendChild(tabs.getElement());
 
         getElement().addPropertyChangeListener("selected", "selected-changed", (e) -> {
-            updatePanelsVisibility();
+            updatePanels();
         });
         getElement().setProperty("selected", 0);
     }
 
-    private void updatePanelsVisibility() {
+    private void updatePanels() {
         for (int i = 0; i < panelList.size(); i++) {
             var panel = panelList.get(i);
-            var isVisiblePanel = i == getElement().getProperty("selected", 0);
-            panel.getElement().getChild(0).setVisible(isVisiblePanel);
-            panel.getElement().setAttribute("loading", !isVisiblePanel);
+            var panelContent = panel.getElement().getChild(0);
+            
+            var isSelectedPanel = i == getElement().getProperty("selected", 0);
+            if (isSelectedPanel) {
+                panelContent.setVisible(true);
+                panel.getElement().removeAttribute("loading");
+                panel.setEnabled(true);
+            } else {
+                panel.getElement().getNode().setEnabled(false);
+            }            
         }
     }
 
@@ -77,16 +84,19 @@ public class TabSheet extends Component implements HasSize, HasStyle, HasTheme {
         tab.setId("tab-" + tabs.getElement().getChildCount());
         tabs.getElement().appendChild(tab.getElement());
 
+        panelContent.setVisible(false);
+
         var panel = new Div();
         panel.getElement().setAttribute("tab", tab.getId().get());
         panel.getElement().setAttribute("slot", "panel");
+        panel.getElement().setAttribute("loading", true);
         panel.setSizeFull();
         panel.add(panelContent);
         panelList.add(panel);
         
         getElement().appendChild(panel.getElement());
 
-        updatePanelsVisibility();
+        updatePanels();
     }
 
     public void add(String tabCaption, Component panelContent) {
