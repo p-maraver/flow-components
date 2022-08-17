@@ -16,8 +16,8 @@
 
 package com.vaadin.flow.component.tabsheet;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasSize;
@@ -26,7 +26,6 @@ import com.vaadin.flow.component.HasTheme;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
@@ -49,7 +48,7 @@ public class TabSheet extends Component implements HasSize, HasStyle, HasTheme {
 
     private Tabs tabs = new Tabs();
 
-    private List<Div> panelList = new ArrayList<>();
+    private Map<Tab, Component> tabToContent = new HashMap<>();
 
     public TabSheet() {
         super();
@@ -57,25 +56,23 @@ public class TabSheet extends Component implements HasSize, HasStyle, HasTheme {
         tabs.getElement().setAttribute("slot", "tabs");
         getElement().appendChild(tabs.getElement());
 
-        getElement().addPropertyChangeListener("selected", "selected-changed", (e) -> {
-            updatePanels();
-        });
-        getElement().setProperty("selected", 0);
+        tabs.addSelectedChangeListener(e -> updatePanels());
     }
 
     private void updatePanels() {
-        for (int i = 0; i < panelList.size(); i++) {
-            var panel = panelList.get(i);
-            var panelContent = panel.getElement().getChild(0);
+        // Iterate tabToContent
+        for (Map.Entry<Tab, Component> entry : tabToContent.entrySet()) {
+            Tab tab = entry.getKey();
+            Component panelContent = entry.getValue();
             
-            var isSelectedPanel = i == getElement().getProperty("selected", 0);
-            if (isSelectedPanel) {
-                panelContent.setVisible(true);
-                panel.getElement().removeAttribute("loading");
-                panel.setEnabled(true);
+            if (tab.equals(tabs.getSelectedTab())) {
+                if (!panelContent.isAttached()) {
+                    getElement().appendChild(panelContent.getElement());
+                }
+                panelContent.getElement().setEnabled(true);
             } else {
-                panel.getElement().getNode().setEnabled(false);
-            }            
+                panelContent.getElement().getNode().setEnabled(false);
+            }
         }
     }
 
@@ -84,17 +81,14 @@ public class TabSheet extends Component implements HasSize, HasStyle, HasTheme {
         tab.setId("tab-" + tabs.getElement().getChildCount());
         tabs.getElement().appendChild(tab.getElement());
 
-        panelContent.setVisible(false);
+        panelContent.getElement().setAttribute("tab", tab.getId().get());
+        panelContent.getElement().setAttribute("slot", "panel");
 
-        var panel = new Div();
-        panel.getElement().setAttribute("tab", tab.getId().get());
-        panel.getElement().setAttribute("slot", "panel");
-        panel.getElement().setAttribute("loading", true);
-        panel.setSizeFull();
-        panel.add(panelContent);
-        panelList.add(panel);
-        
-        getElement().appendChild(panel.getElement());
+        tabToContent.put(tab, panelContent);
+
+        if (tabs.getSelectedTab() == null) {
+            tabs.setSelectedTab(tab);
+        }
 
         updatePanels();
     }

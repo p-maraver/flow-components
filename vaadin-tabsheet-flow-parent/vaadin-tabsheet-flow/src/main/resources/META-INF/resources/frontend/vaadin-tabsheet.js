@@ -54,7 +54,7 @@ class TabSheet extends ControllerMixin(ElementMixin(ThemableMixin(PolymerElement
           flex: 1;
         }
 
-        :host ::slotted([loading])::before {
+        :host([loading]) [part="panel-container"]::before {
           content: 'Loading...';
           display: block;
         }
@@ -179,6 +179,8 @@ class TabSheet extends ControllerMixin(ElementMixin(ThemableMixin(PolymerElement
     panels.forEach((panel) => {
       panel.hidden = panel.getAttribute('tab') !== selectedTabId;
     });
+
+    this.toggleAttribute('loading', panels.every(panel => panel.hidden));
   }
 
   __orientationSelectedChanged(tabs, orientation, selected) {
