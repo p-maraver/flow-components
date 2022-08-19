@@ -475,6 +475,7 @@ public class Grid<T> extends Component implements HasStyle, HasSize,
         private Rendering<T> rendering;
 
         private SerializableFunction<T, String> classNameGenerator = item -> null;
+        private SerializableFunction<T, String> tooltipTextGenerator = item -> null;
 
         /**
          * Constructs a new Column for use inside a Grid.
@@ -1028,6 +1029,28 @@ public class Grid<T> extends Component implements HasStyle, HasSize,
             return this;
         }
 
+        public Column<T> setTooltipTextGenerator(SerializableFunction<T, String> generator) {
+            if (!getGrid().getElement().getChildren().anyMatch(child -> "tooltip".equals(child.getAttribute("slot")))) {
+                // No <vaadin-tooltip> yet added to the grid, add one
+                var tooltipElement = new Element("vaadin-tooltip");
+                tooltipElement.setAttribute("slot", "tooltip");
+                getGrid().getElement().appendChild(tooltipElement);
+                tooltipElement.executeJs("this.textGenerator = ({item, column}) => item.tooltips[column._flowId]");
+                tooltipElement.addAttachListener(e -> {
+                    // set the textGenerator also on attach
+                });
+            }
+        
+            this.tooltipTextGenerator = generator;
+            getGrid().getDataCommunicator().reset();
+    
+
+            // getElement().callJsFunction("$connector.setTooltipTextGenerator");
+
+            return this;
+        }
+    
+
         /**
          * Gets the function that is used for generating CSS class names for
          * cells in this column.
@@ -1036,6 +1059,10 @@ public class Grid<T> extends Component implements HasStyle, HasSize,
          */
         public SerializableFunction<T, String> getClassNameGenerator() {
             return classNameGenerator;
+        }
+
+        public SerializableFunction<T, String> getTooltipTextGenerator() {
+            return tooltipTextGenerator;
         }
 
         @Override
@@ -1469,8 +1496,10 @@ public class Grid<T> extends Component implements HasStyle, HasSize,
         gridDataGenerator = new CompositeDataGenerator<>();
         gridDataGenerator.addDataGenerator(this::generateUniqueKeyData);
         gridDataGenerator.addDataGenerator(this::generateStyleData);
+        gridDataGenerator.addDataGenerator(this::generateTooltipTextData);
         gridDataGenerator.addDataGenerator(this::generateRowsDragAndDropAccess);
         gridDataGenerator.addDataGenerator(this::generateDragData);
+
 
         dataCommunicator = dataCommunicatorBuilder.build(getElement(),
                 gridDataGenerator, (U) arrayUpdater,
@@ -3855,6 +3884,21 @@ public class Grid<T> extends Component implements HasStyle, HasSize,
      */
     public SerializableFunction<T, String> getClassNameGenerator() {
         return classNameGenerator;
+    }
+
+    private void generateTooltipTextData(T item, JsonObject jsonObject) {
+        JsonObject tooltips = Json.createObject();
+
+        idToColumnMap.forEach((id, column) -> {
+            String cellTooltip = column.getTooltipTextGenerator().apply(item);
+            if (cellTooltip != null) {
+                tooltips.put(id, cellTooltip);
+            }
+        });
+
+        if (tooltips.keys().length > 0) {
+            jsonObject.put("tooltips", tooltips);
+        }
     }
 
     private void generateStyleData(T item, JsonObject jsonObject) {

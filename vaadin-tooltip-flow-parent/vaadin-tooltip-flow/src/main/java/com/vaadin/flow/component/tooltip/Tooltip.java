@@ -33,15 +33,15 @@ import com.vaadin.flow.component.dependency.NpmPackage;
  */
 @Tag("vaadin-tooltip")
 // @JsModule("@vaadin/tooltip/src/vaadin-tooltip.js")
-// @NpmPackage(value = "@vaadin/vaadin-tooltip", version = "23.2.0-alpha6")
+// @NpmPackage(value = "@vaadin/vaadin-tooltip", version = "23.2.0-beta2")
 
 // PROTO MODULES
 @JsModule("./tooltip-export.ts")
 @JsModule("./tooltip/vaadin-tooltip.js")
-@NpmPackage(value = "@vaadin/vaadin-overlay", version = "23.2.0-alpha6")
-@NpmPackage(value = "@vaadin/component-base", version = "23.2.0-alpha6")
-@NpmPackage(value = "@vaadin/vaadin-lumo-styles", version = "23.2.0-alpha6")
-@NpmPackage(value = "@vaadin/vaadin-themable-mixin", version = "23.2.0-alpha6")
+@NpmPackage(value = "@vaadin/vaadin-overlay", version = "23.2.0-beta2")
+@NpmPackage(value = "@vaadin/component-base", version = "23.2.0-beta2")
+@NpmPackage(value = "@vaadin/vaadin-lumo-styles", version = "23.2.0-beta2")
+@NpmPackage(value = "@vaadin/vaadin-themable-mixin", version = "23.2.0-beta2")
 public class Tooltip extends Component {
 
     public Tooltip(Component target, String text) {

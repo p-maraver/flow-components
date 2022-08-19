@@ -233,15 +233,15 @@ class Tooltip extends ThemePropertyMixin(ElementMixin(PolymerElement)) {
   /** @private */
   __targetChanged(target, oldTarget) {
     if (oldTarget) {
-      oldTarget.removeEventListener('mouseenter', this.__boundOnMouseEnter);
-      oldTarget.removeEventListener('mouseleave', this.__boundOnMouseLeave);
+      oldTarget.removeEventListener('mouseover', this.__boundOnMouseEnter);
+      oldTarget.removeEventListener('mouseout', this.__boundOnMouseLeave);
       oldTarget.removeEventListener('focusin', this.__boundOnFocusin);
       oldTarget.removeEventListener('focusout', this.__boundOnFocusout);
     }
 
     if (target) {
-      target.addEventListener('mouseenter', this.__boundOnMouseEnter);
-      target.addEventListener('mouseleave', this.__boundOnMouseLeave);
+      target.addEventListener('mouseover', this.__boundOnMouseEnter);
+      target.addEventListener('mouseout', this.__boundOnMouseLeave);
       target.addEventListener('focusin', this.__boundOnFocusin);
       target.addEventListener('focusout', this.__boundOnFocusout);
     }

@@ -31,6 +31,8 @@ public class BeanGridPage extends Div {
                 .<Person> of("<div>[[item.name]] [[item.age]]</div>")
                 .withProperty("name", Person::getFirstName)
                 .withProperty("age", Person::getAge));
+
+                grid.getColumnByKey("firstName").setTooltipTextGenerator(person -> "First name of the person is " + person.getFirstName());
         add(grid);
     }
 

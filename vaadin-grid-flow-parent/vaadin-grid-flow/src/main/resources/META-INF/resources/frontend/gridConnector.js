@@ -123,6 +123,30 @@ import { isFocusable } from '@vaadin/grid/src/vaadin-grid-active-item-mixin.js';
 
         let sorterDirectionsSetFromServer = false;
 
+        // TODO: This is a temporary workaround used for prototyping purposes while the necessary
+        // Web Component API is missing.
+        const tooltip = grid.querySelector('vaadin-tooltip');
+        if (tooltip) {
+          grid.addEventListener('mousemove', e => {
+            const targetCell = e.path.find(node => node.getAttribute && node.getAttribute('part') && node.getAttribute('part').includes('body-cell'));
+          
+            if (!targetCell) {
+              tooltip.target = undefined;
+            } else if (tooltip.target !== targetCell) {
+              const text = tooltip.textGenerator(grid.getEventContext(e));
+              
+              if (text) {
+                tooltip.target = targetCell;
+                tooltip.text = text;
+                console.log('tooltip target and text changed', targetCell, text);
+              } else {
+                tooltip.target = undefined;
+              }
+            }
+          });
+        }
+
+
         grid.size = 0; // To avoid NaN here and there before we get proper data
         grid.itemIdPath = 'key';
 
