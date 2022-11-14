@@ -25,29 +25,10 @@ import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.shared.Registration;
 
 /**
- * <p>
- * Description copied from corresponding location in WebComponent:
- * </p>
- * <p>
- * {@code <vaadin-dialog>} is a Web Component for customized modal dialogs.
- * </p>
- * <p>
- * &lt;vaadin-dialog opened&gt; &lt;template&gt; Sample dialog &lt;/template&gt;
- * &lt;/vaadin-dialog&gt;
- * </p>
- * <h3>Styling</h3>
- * <p>
- * See <a href=
- * "https://github.com/vaadin/vaadin-overlay/blob/master/src/vaadin-overlay.html"
- * >{@code <vaadin-overlay>} documentation</a> for
- * {@code <vaadin-dialog-overlay>} parts.
- * </p>
- * <p>
- * See
- * <a href="https://github.com/vaadin/vaadin-themable-mixin/wiki">ThemableMixin
- * – how to apply styles for shadow parts</a>
- * </p>
+ * @deprecated since v23.3. Will be removed in v24 along with all generated
+ *             classes.
  */
+@Deprecated
 @Tag("vaadin-dialog")
 @NpmPackage(value = "@vaadin/polymer-legacy-adapter", version = "23.3.0-alpha6")
 @JsModule("@vaadin/polymer-legacy-adapter/style-modules.js")
@@ -70,7 +51,11 @@ public abstract class GeneratedVaadinDialog<R extends GeneratedVaadinDialog<R>>
      * </p>
      *
      * @return the {@code opened} property from the webcomponent
+     *
+     * @deprecated since v23.3. Will be removed in v24 along with all generated
+     *             classes.
      */
+    @Deprecated
     @Synchronize(property = "opened", value = "opened-changed")
     protected boolean isOpenedBoolean() {
         return getElement().getProperty("opened", false);
@@ -86,7 +71,11 @@ public abstract class GeneratedVaadinDialog<R extends GeneratedVaadinDialog<R>>
      *
      * @param opened
      *            the boolean value to set
+     *
+     * @deprecated since v23.3. Will be removed in v24 along with all generated
+     *             classes.
      */
+    @Deprecated
     protected void setOpened(boolean opened) {
         getElement().setProperty("opened", opened);
     }
@@ -106,7 +95,11 @@ public abstract class GeneratedVaadinDialog<R extends GeneratedVaadinDialog<R>>
      * </p>
      *
      * @return the {@code ariaLabel} property from the webcomponent
+     *
+     * @deprecated since v23.3. Will be removed in v24 along with all generated
+     *             classes.
      */
+    @Deprecated
     protected String getAriaLabelString() {
         return getElement().getProperty("ariaLabel");
     }
@@ -124,12 +117,21 @@ public abstract class GeneratedVaadinDialog<R extends GeneratedVaadinDialog<R>>
      *
      * @param ariaLabel
      *            the String value to set
+     *
+     * @deprecated since v23.3. Will be removed in v24 along with all generated
+     *             classes.
      */
+    @Deprecated
     protected void setAriaLabel(String ariaLabel) {
         getElement().setProperty("ariaLabel",
                 ariaLabel == null ? "" : ariaLabel);
     }
 
+    /**
+     * @deprecated since v23.3. Will be removed in v24 along with all generated
+     *             classes.
+     */
+    @Deprecated
     public static class OpenedChangeEvent<R extends GeneratedVaadinDialog<R>>
             extends ComponentEvent<R> {
         private final boolean opened;
@@ -151,7 +153,11 @@ public abstract class GeneratedVaadinDialog<R extends GeneratedVaadinDialog<R>>
      * @param listener
      *            the listener
      * @return a {@link Registration} for removing the event listener
+     *
+     * @deprecated since v23.3. Will be removed in v24 along with all generated
+     *             classes.
      */
+    @Deprecated
     protected Registration addOpenedChangeListener(
             ComponentEventListener<OpenedChangeEvent<R>> listener) {
         return getElement()
